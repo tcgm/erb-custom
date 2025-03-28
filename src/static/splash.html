@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Loading...</title>
+  <style>
+    body {
+      background: #001529;
+      color: #00a6ff;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .title-bar {
+      -webkit-app-region: drag;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 30px;
+      background: transparent;
+    }
+
+    h1 {
+      font-size: 28px;
+      text-align: center;
+      text-shadow: 0 0 15px #00a6ff, 0 0 30px #0078b9;
+      animation: glow 1.5s ease-in-out infinite alternate;
+      margin-bottom: 20px;
+      -webkit-app-region: no-drag;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 5px #00a6ff, 0 0 10px #0078b9; }
+      to { text-shadow: 0 0 15px #00a6ff, 0 0 30px #0078b9; }
+    }
+
+    .spinner {
+      border: 4px solid #333;
+      border-top: 4px solid #00a6ff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      -webkit-app-region: no-drag;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .caption {
+      margin-top: 15px;
+      font-size: 12px;
+      opacity: 0.6;
+      -webkit-app-region: no-drag;
+    }
+  </style>
+  <script>
+    // Optional fade-out on close
+    window.addEventListener('beforeunload', () => {
+      document.body.style.transition = 'opacity 0.5s ease';
+      document.body.style.opacity = '0';
+    });
+
+    // Grab app name from query string or default
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const appName = params.get('name') || 'Loading App';
+      document.title = appName;
+      document.querySelector('h1').textContent = appName;
+    });
+  </script>
+</head>
+<body>
+  <div class="title-bar"></div>
+  <h1>Loading App</h1>
+  <div class="spinner"></div>
+  <div class="caption">Loading...</div>
+</body>
+</html>

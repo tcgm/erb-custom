@@ -20,6 +20,10 @@ node_modules
 
 release/app/dist
 release/build
+release/*.zip
+release/*.nsis
+release/*.msi
+release/*.exe
 .erb/dll
 
 .idea
@@ -27,3 +31,5 @@ npm-debug.log.*
 *.css.d.ts
 *.sass.d.ts
 *.scss.d.ts
+
+.history/

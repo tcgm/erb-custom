@@ -9,7 +9,8 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, Tray, Menu } from 'electron';
+import fs from 'fs';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -23,7 +24,13 @@ class AppUpdater {
   }
 }
 
+let tray = null;
+let splash: BrowserWindow | null = null;
+
 let mainWindow: BrowserWindow | null = null;
+
+// Detect development mode
+const isDev = !app.isPackaged;
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -56,28 +63,84 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'assets')
+  : path.join(__dirname, '../../assets');
+
+const getAssetPath = (...paths: string[]): string => {
+  return path.join(RESOURCES_PATH, ...paths);
+};
+
+const iconPath = getAssetPath("icon.png");
+
 const createWindow = async () => {
   if (isDebug) {
     await installExtensions();
   }
 
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../../assets');
+  // 1️⃣ Create splash screen
+  splash = new BrowserWindow({
+    width: 400,
+    height: 300,
+    frame: false,
+    alwaysOnTop: false,
+    transparent: false,
+    resizable: false,
+    show: true
+  });
+  
+  const splashPath = isDev
+  ? path.join(__dirname, '../../src/static/splash.html')
+  : path.join(process.resourcesPath, 'static/splash.html');
 
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
+  if (splash && !splash.isDestroyed()) {
+    let splashName = app.getName()
+      .replace(/[^a-zA-Z0-9 ]/g, ' ') // Remove non-alphanumeric characters
+      .replace(/\s+/g, ' ') // Replace multiple spaces with a single space
+      .trim() // Trim leading and trailing spaces
+      .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize each word
 
+    splash?.loadURL(`${splashPath}?version=${app.getVersion()}&env=${process.env.NODE_ENV}&isDev=${isDev}&isPackaged=${app.isPackaged}&isDebug=${isDebug}&name=${splashName}`);
+    
+    splash.setTitle(splashName);
+
+    // Hack to make the splash screen pop up on top of the screen
+    // This is a workaround for the issue where the splash screen doesn't show
+    splash?.setAlwaysOnTop(true, 'screen-saver');
+    splash?.setAlwaysOnTop(false, 'screen-saver');
+  }
+  
+  setTimeout(() => {
+    if (splash && !splash.isDestroyed()) {
+      try {
+        splash.close();
+      } catch (e) {
+        console.warn('Splash already closed:', e);
+      }
+    }
+
+    splash = null;
+  
+    if (mainWindow && !mainWindow.isVisible()) {
+      if (mainWindow) {
+        mainWindow.show();
+      }
+    }
+  }, 10000);
+
+  // 2️⃣ Create main window
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728,
+    width: 1280,
+    height: 720,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
+        contextIsolation: true,
+        sandbox: false,
+        nodeIntegration: false
     },
   });
 
@@ -89,8 +152,10 @@ const createWindow = async () => {
     }
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
+      splash?.close();
     } else {
       mainWindow.show();
+      splash?.close();
     }
   });
 
@@ -110,6 +175,28 @@ const createWindow = async () => {
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
+  
+  // 3️⃣ Tray icon & menu
+  try {
+    if (fs.existsSync(iconPath)) {
+      tray = new Tray(iconPath);
+      const contextMenu = Menu.buildFromTemplate([
+        { label: 'Show App', click: () => mainWindow && mainWindow.show() },
+        { label: 'Quit', click: () => app.quit() }
+      ]);
+      tray.setToolTip(app.getName());
+      tray.setContextMenu(contextMenu);
+      tray.on('click', () => {
+        if (mainWindow) {
+          mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+        }
+      });
+    } else {
+      console.warn('Tray icon not found, skipping tray setup.');
+    }
+  } catch (err) {
+    console.error('Tray setup failed:', err);
+  }
 };
 
 /**
