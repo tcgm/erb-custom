@@ -152,10 +152,17 @@ const createWindow = async () => {
     }
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
-      splash?.close();
     } else {
       mainWindow.show();
-      splash?.close();
+    }
+    
+    if (splash && !splash.isDestroyed() && mainWindow) {
+      try {
+        splash.close();
+        splash = null;
+      } catch (e) {
+        console.warn('Splash already closed:', e);
+      }
     }
   });
 
