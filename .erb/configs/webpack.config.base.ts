@@ -29,6 +29,10 @@ const configuration: webpack.Configuration = {
           },
         },
       },
+      {
+        test: /\.txt$/,
+        type: 'asset/source', // This tells Webpack to import raw text directly
+      },
     ],
   },
 

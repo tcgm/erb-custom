@@ -115,7 +115,14 @@ const configuration: webpack.Configuration = {
           },
           'file-loader',
         ],
-      },
+      },,
+      {
+        test: /\.(mp3|wav|ogg)$/,
+        type: 'asset/resource', // Tells Webpack to copy the audio files to the output directory
+        generator: {
+          filename: 'assets/audio/[name][ext]', // Puts audio files in 'assets/audio/' in the output
+        },
+      }
     ],
   },
   plugins: [
