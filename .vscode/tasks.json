@@ -10,6 +10,31 @@
 				"$tsc"
 			],
 			"group": "build"
+		},
+		{
+			"label": "Reinstall React Bits (with assets)",
+			"type": "shell",
+			"command": "npm run react-bits:install-all",
+			"args": [],
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Start app to verify asset resolution",
+			"type": "shell",
+			"command": "npm start",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Start app after narrowing imports",
+			"type": "shell",
+			"command": "npm start",
+			"args": [],
+			"problemMatcher": [],
+			"group": "build"
 		}
 	]
 }

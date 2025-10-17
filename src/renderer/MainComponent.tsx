@@ -4,7 +4,7 @@ import { Box, Heading, Button as ChakraButton, Stack } from "@chakra-ui/react"
 import { Button as MUIButton } from "@mui/material"
 import icon from "../../assets/icon.svg"
 import HelloBits from "./components/react-bits/HelloBits"
-import { Dock } from "./components/react-bits/all"
+import Dock from "./components/react-bits/all/Components/Dock/Dock"
 import { FaHome, FaGithub, FaCogs } from "react-icons/fa"
 
 const DocsButton: React.FC = () => (

@@ -42,37 +42,63 @@ async function ensureFreshClone() {
   }
   // Verify git exists
   try {
+  const processedDirs = new Set();
+  const assetExt = /\.(png|jpe?g|gif|webp|svg|mp4|webm|ogg|mp3|wav|m4a|aac|oga|glb|gltf|hdr|bin|json)$/i;
     await run('git --version');
   } catch (e) {
     throw new Error('git is required but was not found in PATH. Please install git and retry.');
   }
   // Clean any previous clone
   if (fs.existsSync(CLONE_DIR)) {
-    fs.rmSync(CLONE_DIR, { recursive: true, force: true });
-  }
-  if (!fs.existsSync(CACHE_DIR)) {
-    fs.mkdirSync(CACHE_DIR, { recursive: true });
-  }
-  // Shallow clone
-  console.log('Cloning react-bits repo (shallow)...');
-  await run(`git clone --depth=1 https://github.com/DavidHDev/react-bits "${CLONE_DIR}"`);
-  return CLONE_DIR;
-}
+      if (!/\.(tsx|css)$/i.test(srcPath)) continue;
 
-function fetchJson(url) {
-  return new Promise((resolve, reject) => {
-    https
-      .get(url, (res) => {
-        if (res.statusCode !== 200) {
-          reject(new Error(`Request failed with status ${res.statusCode}: ${url}`));
-          res.resume();
-          return;
+      const rel = srcPath.slice(PREFIX.length); // e.g. TextAnimations/ASCIIText/ASCIIText.tsx
+      const destPath = path.join(DEST_ROOT, rel);
+      try {
+        ensureDir(destPath);
+        const localSource = path.join(localSourceRoot, 'src', 'ts-default', rel);
+        if (fs.existsSync(localSource)) {
+          fs.copyFileSync(localSource, destPath);
+          wrote++;
+          console.log('✔︎', rel, '(local)');
+        } else {
+          const url = WEB_BASE + srcPath;
+          const content = await fetchText(url);
+          if (looksLikeHtml(content)) {
+            console.warn('⚠︎ Skipping (HTML response):', rel);
+          } else {
+            fs.writeFileSync(destPath, content, 'utf8');
+            wrote++;
+            console.log('✔︎', rel, '(remote)');
+          }
         }
-        let data = '';
-        res.setEncoding('utf8');
-        res.on('data', (chunk) => (data += chunk));
-        res.on('end', () => {
-          try {
+      } catch (e) {
+        console.warn('⚠︎ Failed:', rel, e.message);
+      }
+
+      // Also copy any asset files in the same component directory
+      try {
+        const relDir = path.posix.dirname(rel).split('/').join(path.sep);
+        if (!processedDirs.has(relDir)) {
+          processedDirs.add(relDir);
+          const localDir = path.join(localSourceRoot, 'src', 'ts-default', relDir);
+          if (fs.existsSync(localDir) && fs.statSync(localDir).isDirectory()) {
+            const entries = fs.readdirSync(localDir, { withFileTypes: true });
+            for (const entry of entries) {
+              if (!entry.isFile()) continue;
+              if (!assetExt.test(entry.name)) continue;
+              const srcFile = path.join(localDir, entry.name);
+              const destFile = path.join(DEST_ROOT, relDir, entry.name);
+              ensureDir(destFile);
+              fs.copyFileSync(srcFile, destFile);
+              wrote++;
+              console.log('  ↳ asset', path.posix.join(relDir.split('\\').join('/'), entry.name));
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('⚠︎ Asset copy failed for dir:', rel, e.message);
+      }
             resolve(JSON.parse(data));
           } catch (e) {
             reject(e);

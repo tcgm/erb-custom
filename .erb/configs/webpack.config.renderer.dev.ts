@@ -94,8 +94,16 @@ const configuration: webpack.Configuration = {
       },
       // Images
       {
-        test: /\.(png|jpg|jpeg|gif)$/i,
+        test: /\.(png|jpg|jpeg|gif|webp)$/i,
         type: 'asset/resource',
+      },
+      // 3D and HDR assets
+      {
+        test: /\.(glb|gltf|hdr|bin)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'assets/models/[name][ext]',
+        },
       },
       // SVG
       {
