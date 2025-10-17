@@ -15,6 +15,12 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { registerFileOperations } from './modules/fileOperations';
+import { registerLanShare } from './modules/lanShare';
+import {
+  registerSchemePrivileges,
+  registerStreamProtocols,
+} from './modules/customStreamProtocol';
 
 class AppUpdater {
   constructor() {
@@ -218,9 +224,19 @@ app.on('window-all-closed', () => {
   }
 });
 
+// Register custom protocol privileges BEFORE app.whenReady()
+registerSchemePrivileges('filestream');
+
 app
   .whenReady()
   .then(() => {
+    // Register all IPC handlers
+    registerFileOperations();
+    registerLanShare();
+    
+    // Register custom stream protocol
+    registerStreamProtocols('filestream');
+    
     createWindow();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
