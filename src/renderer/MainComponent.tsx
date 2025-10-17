@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom"
 import { Box, Heading, Button as ChakraButton, Stack } from "@chakra-ui/react"
 // Using a plain anchor with Bootstrap classes to avoid heavy union types from react-bootstrap Button
 import { Button as MUIButton } from "@mui/material"
-import icon from "../../assets/icon.svg"
 import HelloBits from "./components/react-bits/HelloBits"
 import Dock from "./components/react-bits/all/Components/Dock/Dock"
 import ModuleStatus from "./components/ModuleStatus"
+import AnimatedLogo from "./components/AnimatedLogo"
 import { FaHome, FaGithub, FaCogs, FaGamepad } from "react-icons/fa"
 
 const DocsButton: React.FC = () => (
@@ -51,11 +51,12 @@ const MainComponent: React.FC = () => {
 
   return (
     <Box textAlign="center" p={8}>
-    <Box className="Hello" mb={6} display="flex" justifyContent="center">
-      <img width="200" alt="icon" src={icon} />
-    </Box>
+      {/* Logo with negative margin to not push content down */}
+      <Box mb={6} display="flex" justifyContent="center" marginBottom="-150px" zIndex={1} position="relative">
+        <AnimatedLogo size={400} />
+      </Box>
 
-      <Heading as="h1" size="xl" mb={6}>
+      <Heading as="h1" size="xl" mb={6} mt="50px">
         ERB Custom
       </Heading>
       <Box display="flex" justifyContent="center" mb={6}>
