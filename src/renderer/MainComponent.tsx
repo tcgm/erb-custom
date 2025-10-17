@@ -1,4 +1,5 @@
 import React from "react"
+import { useNavigate } from "react-router-dom"
 import { Box, Heading, Button as ChakraButton, Stack } from "@chakra-ui/react"
 // Using a plain anchor with Bootstrap classes to avoid heavy union types from react-bootstrap Button
 import { Button as MUIButton } from "@mui/material"
@@ -6,7 +7,7 @@ import icon from "../../assets/icon.svg"
 import HelloBits from "./components/react-bits/HelloBits"
 import Dock from "./components/react-bits/all/Components/Dock/Dock"
 import ModuleStatus from "./components/ModuleStatus"
-import { FaHome, FaGithub, FaCogs } from "react-icons/fa"
+import { FaHome, FaGithub, FaCogs, FaGamepad } from "react-icons/fa"
 
 const DocsButton: React.FC = () => (
   <ChakraButton
@@ -46,6 +47,8 @@ const StarButton: React.FC = () => (
 )
 
 const MainComponent: React.FC = () => {
+  const navigate = useNavigate()
+
   return (
     <Box textAlign="center" p={8}>
     <Box className="Hello" mb={6} display="flex" justifyContent="center">
@@ -69,6 +72,14 @@ const MainComponent: React.FC = () => {
         <DocsButton />
         <DonateLink />
         <StarButton />
+        <ChakraButton
+          onClick={() => navigate('/phaser')}
+          colorScheme="purple"
+          variant="solid"
+          leftIcon={<FaGamepad />}
+        >
+          🎮 Phaser Demo
+        </ChakraButton>
       </Stack>
 
       {/* Module Status Line */}
@@ -81,6 +92,7 @@ const MainComponent: React.FC = () => {
           <Dock
             items={[
               { icon: <FaHome size={26} />, label: "Home", onClick: () => console.log("Home") },
+              { icon: <FaGamepad size={26} />, label: "Phaser", onClick: () => navigate('/phaser') },
               {
                 icon: <FaGithub size={26} />, label: "GitHub", onClick: () => window.open("https://github.com/tcgm/erb-custom", "_blank")
               },

@@ -6,6 +6,19 @@
   Electron React Boilerplate uses <a href="https://electron.atom.io/">Electron</a>, <a href="https://facebook.github.io/react/">React</a>, <a href="https://github.com/reactjs/react-router">React Router</a>, <a href="https://webpack.js.org/">Webpack</a> and <a href="https://www.npmjs.com/package/react-refresh">React Fast Refresh</a>.
 </p>
 
+## 🎨 ERB Custom Features
+
+This customized version includes additional integrated modules:
+
+- 🎮 **Phaser 3** - HTML5 game engine with WebGL and Canvas rendering ([docs](docs/PHASER_INTEGRATION.md))
+- 📁 **File Operations** - Generic file dialogs, read/write, and metadata utilities
+- 🌐 **LAN Share** - P2P file transfer over local networks ([docs](docs/LAN_SHARE_SECURITY.md))
+- 🎬 **Custom Stream Protocol** - filestream:// for direct file access with range requests
+- 🎨 **UI Libraries** - Material-UI, Chakra UI, Bootstrap, and Three.js/R3F
+- ⚡ **Module Status** - Real-time module availability indicators
+
+See [INTEGRATION_COMPLETE.md](INTEGRATION_COMPLETE.md) for full integration details.
+
 <br>
 
 <div align="center">
@@ -54,7 +67,7 @@ See our [docs and guides here](https://electron-react-boilerplate.js.org/docs/in
 
 ## Community
 
-Join our Discord: https://discord.gg/Fjy3vfgy5q
+Join our Discord: <https://discord.gg/Fjy3vfgy5q>
 
 ## Sponsors
 

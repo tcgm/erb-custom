@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Box, HStack, Text, Tooltip, Badge } from '@chakra-ui/react';
-import { FaFile, FaNetworkWired, FaVideo, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { FaFile, FaNetworkWired, FaVideo, FaGamepad, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 
 interface ModuleStatusState {
   fileOperations: boolean | null;
   lanShare: boolean | null;
   streamProtocol: boolean | null;
+  phaser: boolean | null;
   lanStats?: { sends: number; receives: number };
 }
 
@@ -14,6 +15,7 @@ const ModuleStatus: React.FC = () => {
     fileOperations: null,
     lanShare: null,
     streamProtocol: null,
+    phaser: null,
   });
 
   useEffect(() => {
@@ -28,10 +30,20 @@ const ModuleStatus: React.FC = () => {
 
         const lanStats = lanShare ? await window.electron.modules.getLanStats() : undefined;
 
+        // Check if Phaser is available
+        let phaserAvailable = false;
+        try {
+          const Phaser = await import('phaser');
+          phaserAvailable = !!Phaser;
+        } catch {
+          phaserAvailable = false;
+        }
+
         setStatus({
           fileOperations: fileOps,
           lanShare,
           streamProtocol: streamProto,
+          phaser: phaserAvailable,
           lanStats,
         });
       } catch (error) {
@@ -108,6 +120,14 @@ const ModuleStatus: React.FC = () => {
             <FaVideo size={14} />
             <Text fontWeight="medium">Stream Protocol</Text>
             <StatusIcon active={status.streamProtocol} />
+          </HStack>
+        </Tooltip>
+
+        <Tooltip label="Phaser 3 Game Engine - Fast HTML5 game framework with WebGL and Canvas rendering">
+          <HStack spacing={2}>
+            <FaGamepad size={14} />
+            <Text fontWeight="medium">Phaser</Text>
+            <StatusIcon active={status.phaser} />
           </HStack>
         </Tooltip>
       </HStack>
