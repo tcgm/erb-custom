@@ -1,0 +1,12 @@
+{
+    "$schema": "https://unpkg.com/jsrepo@1.47.0/schemas/project-config.json",
+    "formatter": "prettier",
+    "includeTests": false,
+    "watermark": false,
+    "paths": {
+        "*": "./src/renderer/components/react-bits/all"
+    },
+    "repos": [
+        "github/DavidHDev/react-bits"
+    ]
+}

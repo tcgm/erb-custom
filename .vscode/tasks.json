@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build renderer (prod) to validate Dock",
+			"type": "shell",
+			"command": "npm run build:renderer",
+			"args": [],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		}
+	]
+}

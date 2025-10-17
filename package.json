@@ -50,7 +50,9 @@
     "start:main": "concurrently -k \"cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --watch --config ./.erb/configs/webpack.config.main.dev.ts\" \"electronmon .\"",
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
-    "test": "jest"
+    "test": "jest",
+    "react-bits:deps": "npm i gsap motion three ogl @react-three/fiber @react-three/drei @react-three/rapier meshline postprocessing @react-three/postprocessing lenis @use-gesture/react gl-matrix matter-js mathjs @gsap/react",
+    "react-bits:install-all": "node scripts/install-react-bits-all.js"
   },
   "browserslist": [
     "extends browserslist-config-erb"
@@ -112,20 +114,36 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fontsource/roboto": "^5.2.5",
+    "@gsap/react": "^2.1.2",
     "@mui/icons-material": "^7.0.0",
     "@mui/material": "^7.0.0",
+    "@react-three/drei": "^10.7.6",
+    "@react-three/fiber": "^9.4.0",
+    "@react-three/postprocessing": "^3.0.4",
+    "@react-three/rapier": "^2.1.0",
+    "@use-gesture/react": "^10.3.1",
     "bootstrap": "^5.3.3",
     "dotenv": "^16.4.7",
     "electron-debug": "^4.1.0",
     "electron-log": "^5.3.2",
     "electron-updater": "^6.3.9",
     "framer-motion": "^12.6.2",
+    "gl-matrix": "^3.4.4",
+    "gsap": "^3.13.0",
+    "lenis": "^1.3.11",
+    "mathjs": "^15.0.0",
+    "matter-js": "^0.20.0",
+    "meshline": "^3.3.1",
+    "motion": "^12.23.24",
     "next-themes": "^0.4.6",
+    "ogl": "^1.0.11",
+    "postprocessing": "^6.37.8",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
-    "react-router-dom": "^7.3.0"
+    "react-router-dom": "^7.3.0",
+    "three": "^0.180.0"
   },
   "devDependencies": {
     "@electron/rebuild": "^3.7.1",

@@ -88,6 +88,13 @@ const configuration: webpack.Configuration = {
           'file-loader',
         ],
       },
+      {
+        test: /\.(mp3|wav|ogg)$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'assets/audio/[name][ext]',
+        },
+      },
     ],
   },
 

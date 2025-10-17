@@ -1,0 +1,40 @@
+.hello-bits {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .5rem .75rem;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
+    color: #fff;
+    font-weight: 600
+}
+
+.hello-bits__pulse {
+    width: .5rem;
+    height: .5rem;
+    border-radius: 9999px;
+    background: #fff;
+    opacity: .8;
+    animation: pulse 1.6s ease-in-out infinite
+}
+
+.hello-bits__text {
+    letter-spacing: .2px
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: .8
+    }
+
+    50% {
+        transform: scale(1.4);
+        opacity: .45
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: .8
+    }
+}
