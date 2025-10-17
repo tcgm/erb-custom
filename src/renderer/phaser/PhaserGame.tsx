@@ -42,7 +42,7 @@ const PhaserGame: React.FC<PhaserGameProps> = ({
       scene: scenes,
       scale: {
         mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.NO_CENTER,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
       },
       render: {
         antialias: true,

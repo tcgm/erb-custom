@@ -188,10 +188,10 @@ const PhaserDemo: React.FC<PhaserDemoProps> = ({ onBack }) => {
       {/* Background Phaser Game (Full Screen Inset) */}
       <Box
         position="absolute"
-        top="60px"
+        top="10px"
         left={"80px"}
         right={0}
-        bottom="60px"
+        bottom="10px"
         zIndex={0}
         opacity={0.35}
         pointerEvents="auto"

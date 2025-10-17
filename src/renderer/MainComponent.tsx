@@ -52,8 +52,8 @@ const MainComponent: React.FC = () => {
   return (
     <Box textAlign="center" p={8}>
       {/* Logo with negative margin to not push content down */}
-      <Box mb={6} display="flex" justifyContent="center" marginBottom="-150px" zIndex={1} position="relative">
-        <AnimatedLogo size={400} />
+      <Box mb={6} display="flex" justifyContent="center" marginBottom="-325px" marginTop={"-150px"} zIndex={1} position="relative">
+        <AnimatedLogo size={768} />
       </Box>
 
       <Heading as="h1" size="xl" mb={6} mt="50px">
