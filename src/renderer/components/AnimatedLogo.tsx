@@ -17,19 +17,78 @@ interface AnimatedLogoProps {
     right?: string | number;
     bottom?: string | number;
   };
+  // Animation
+  bobAnimationDuration?: number; // Duration of bob animation in seconds
+  bobAnimationDistance?: number; // Distance of bob movement in pixels
+  // Electron configuration
+  orbitRadiusMultiplier?: number; // Multiplier for orbit radius (relative to size)
+  electronSpeeds?: [number, number, number]; // Speed for each electron
+  orbitRotations?: [number, number, number]; // Rotation angle for each orbit in radians
+  electronColors?: [string, string, string]; // Colors for each electron
+  electronCoreRadius?: number; // Radius of electron core
+  trailMaxLength?: number; // Maximum length of electron trail
+  trailOpacity?: number; // Opacity multiplier for trails
+  orbitOpacity?: number; // Opacity of orbit paths
+  orbitLineWidth?: number; // Width of orbit path lines
+  // Lens flare
+  flareBlur?: number; // Blur amount for main flare
+  coreBlur?: number; // Blur amount for core
+  flareWidthMultiplier?: number; // Multiplier for flare width (relative to size)
+  flareHeightMultiplier?: number; // Multiplier for flare height (relative to size)
+  verticalFlareHeightMultiplier?: number; // Multiplier for vertical flare height
+  verticalFlareWidthMultiplier?: number; // Multiplier for vertical flare width
+  coreRadiusMultiplier?: number; // Multiplier for core radius (relative to size)
+  // Plus sign
+  plusOuterGlowWidth?: number; // Width of outer glow on plus
+  plusOuterGlowBlur?: number; // Blur amount for outer glow on plus (in pixels)
+  plusInnerCoreWidth?: number; // Width of inner core on plus
+  plusGlowBaseWidth?: number; // Base width for plus glow layers
+  plusGlowWidthIncrement?: number; // Width increment per glow layer
+  // Pulse animation
+  pulseSpeed?: number; // Speed of pulse animation
+  pulseScale?: number; // Scale amplitude of pulse
+  glowIntensityBase?: number; // Base glow intensity
+  glowIntensityVariation?: number; // Variation in glow intensity
 }
 
 const AnimatedLogo: React.FC<AnimatedLogoProps> = ({ 
   size = 200,
-  electronGlowRadius = 25,
+  electronGlowRadius = 20,
   centerGlowMultiplier = 0.8,
   plusGlowLayers = 3,
   plusGlowSize = 15,
-  plusCoreSize = 20,
+  plusCoreSize = 50,
   dropShadowSizes = [60, 120, 180],
   dropShadowOpacities = [0.8, 0.6, 0.4],
   float = false,
-  floatPosition = { top: '2rem', left: '50%' }
+  floatPosition = { top: '2rem', left: '50%' },
+  bobAnimationDuration = 10,
+  bobAnimationDistance = 15,
+  orbitRadiusMultiplier = 0.35,
+  electronSpeeds = [0.02, 0.022, 0.018],
+  orbitRotations = [0, Math.PI / 3, -Math.PI / 3],
+  electronColors = ['#60a5fa', '#34d399', '#f472b6'],
+  electronCoreRadius = 8,
+  trailMaxLength = 64,
+  trailOpacity = 1,
+  orbitOpacity = 0.8,
+  orbitLineWidth = 2,
+  flareBlur = 20,
+  coreBlur = 10,
+  flareWidthMultiplier = 2.5,
+  flareHeightMultiplier = 0.12,
+  verticalFlareHeightMultiplier = 1.5,
+  verticalFlareWidthMultiplier = 0.08,
+  coreRadiusMultiplier = 0.15,
+  plusOuterGlowWidth = 32,
+  plusOuterGlowBlur = 8,
+  plusInnerCoreWidth = 20,
+  plusGlowBaseWidth = 32,
+  plusGlowWidthIncrement = 2,
+  pulseSpeed = 0.5,
+  pulseScale = 0.15,
+  glowIntensityBase = 0.8,
+  glowIntensityVariation = 0.2
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
@@ -45,18 +104,18 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
 
     const centerX = canvasSize / 2;
     const centerY = canvasSize / 2;
-    const orbitRadius = size * 0.35;
+    const orbitRadius = size * orbitRadiusMultiplier;
     
     // Electron configuration - 3 orbits at different angles
     const electrons = [
-      { angle: 0, speed: 0.02, orbitRotation: 0, color: '#60a5fa' },
-      { angle: Math.PI * 2 / 3, speed: 0.022, orbitRotation: Math.PI / 3, color: '#34d399' },
-      { angle: Math.PI * 4 / 3, speed: 0.018, orbitRotation: -Math.PI / 3, color: '#f472b6' }
+      { angle: 0, speed: electronSpeeds[0], orbitRotation: orbitRotations[0], color: electronColors[0] },
+      { angle: Math.PI * 2 / 3, speed: electronSpeeds[1], orbitRotation: orbitRotations[1], color: electronColors[1] },
+      { angle: Math.PI * 4 / 3, speed: electronSpeeds[2], orbitRotation: orbitRotations[2], color: electronColors[2] }
     ];
 
     // Trail positions for each electron
     const trails = electrons.map(() => [] as Array<{ x: number; y: number; alpha: number }>);
-    const maxTrailLength = 20;
+    const maxTrailLength = trailMaxLength;
 
     let animationFrameId: number;
 
@@ -73,8 +132,8 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
         // Draw orbit ellipse - more visible
         ctx.beginPath();
         ctx.ellipse(0, 0, orbitRadius, orbitRadius * 0.3, 0, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(96, 165, 250, 0.4)';
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = `rgba(96, 165, 250, ${orbitOpacity})`;
+        ctx.lineWidth = orbitLineWidth;
         ctx.stroke();
         
         ctx.restore();
@@ -106,7 +165,7 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
 
         // Draw trail
         trails[idx].forEach((point, i) => {
-          const alpha = (1 - i / maxTrailLength) * point.alpha * 0.5;
+          const alpha = (1 - i / maxTrailLength) * point.alpha * trailOpacity;
           const radius = 2 + (1 - i / maxTrailLength) * 2;
           
           ctx.beginPath();
@@ -144,7 +203,7 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
         // Electron core
         ctx.fillStyle = electron.color;
         ctx.beginPath();
-        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.arc(x, y, electronCoreRadius, 0, Math.PI * 2);
         ctx.fill();
         
         ctx.restore();
@@ -152,19 +211,19 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
 
       // Draw central glowing plus
       const time = Date.now() * 0.002;
-      const pulseScale = 1 + Math.sin(time * 2) * 0.15;
-      const glowIntensity = 0.8 + Math.sin(time * 2) * 0.2;
+      const pulseSc = 1 + Math.sin(time * pulseSpeed) * pulseScale;
+      const glowIntensity = glowIntensityBase + Math.sin(time * pulseSpeed) * glowIntensityVariation;
 
       // JJ Abrams style wide horizontal lens flare - BLUE and HEAVILY BLURRED
       ctx.save();
       ctx.translate(centerX, centerY);
       
       // Enable heavy blur for the flare
-      ctx.filter = 'blur(20px)';
+      ctx.filter = `blur(${flareBlur}px)`;
       
       // Main horizontal flare - very wide and bright BLUE
-      const flareWidth = size * 2.5;
-      const flareHeight = size * 0.12;
+      const flareWidth = size * flareWidthMultiplier;
+      const flareHeight = size * flareHeightMultiplier;
       
       const horizontalGradient = ctx.createLinearGradient(-flareWidth / 2, 0, flareWidth / 2, 0);
       horizontalGradient.addColorStop(0, 'rgba(96, 165, 250, 0)');
@@ -177,7 +236,7 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
       ctx.fillRect(-flareWidth / 2, -flareHeight / 2, flareWidth, flareHeight);
       
       // Secondary horizontal flare (thinner, more intense)
-      const flareHeight2 = size * 0.06;
+      const flareHeight2 = size * (flareHeightMultiplier / 2);
       const horizontalGradient2 = ctx.createLinearGradient(-flareWidth / 2, 0, flareWidth / 2, 0);
       horizontalGradient2.addColorStop(0, 'rgba(96, 165, 250, 0)');
       horizontalGradient2.addColorStop(0.4, `rgba(150, 200, 255, ${glowIntensity * 0.7})`);
@@ -188,8 +247,8 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
       ctx.fillRect(-flareWidth / 2, -flareHeight2 / 2, flareWidth, flareHeight2);
       
       // Vertical flare (shorter) - BLUE
-      const verticalFlareHeight = size * 1.5;
-      const verticalFlareWidth = size * 0.08;
+      const verticalFlareHeight = size * verticalFlareHeightMultiplier;
+      const verticalFlareWidth = size * verticalFlareWidthMultiplier;
       
       const verticalGradient = ctx.createLinearGradient(0, -verticalFlareHeight / 2, 0, verticalFlareHeight / 2);
       verticalGradient.addColorStop(0, 'rgba(96, 165, 250, 0)');
@@ -202,10 +261,10 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
       ctx.fillRect(-verticalFlareWidth / 2, -verticalFlareHeight / 2, verticalFlareWidth, verticalFlareHeight);
       
       // Reset blur for the core
-      ctx.filter = 'blur(10px)';
+      ctx.filter = `blur(${coreBlur}px)`;
       
       // Bright blue core
-      const coreGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, size * 0.15);
+      const coreGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, size * coreRadiusMultiplier);
       coreGradient.addColorStop(0, `rgba(255, 255, 255, ${glowIntensity})`);
       coreGradient.addColorStop(0.3, `rgba(200, 220, 255, ${glowIntensity * 0.8})`);
       coreGradient.addColorStop(0.6, `rgba(150, 200, 255, ${glowIntensity * 0.5})`);
@@ -213,7 +272,7 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
       
       ctx.fillStyle = coreGradient;
       ctx.beginPath();
-      ctx.arc(0, 0, size * 0.15, 0, Math.PI * 2);
+      ctx.arc(0, 0, size * coreRadiusMultiplier, 0, Math.PI * 2);
       ctx.fill();
       
       ctx.filter = 'none'; // Reset filter
@@ -241,13 +300,13 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
       for (let i = plusGlowLayers; i > 0; i--) {
         ctx.save();
         ctx.translate(centerX, centerY);
-        ctx.scale(pulseScale, pulseScale);
+        ctx.scale(pulseSc, pulseSc);
         
         const glowSize = plusGlowSize + i * 5;
         const alpha = glowIntensity * (0.3 / i);
         
         ctx.strokeStyle = `rgba(96, 165, 250, ${alpha})`;
-        ctx.lineWidth = 10 + i * 2;
+        ctx.lineWidth = plusGlowBaseWidth + i * plusGlowWidthIncrement;
         ctx.lineCap = 'round';
         
         // Vertical line
@@ -268,11 +327,12 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
       // Plus solid core - very bright white
       ctx.save();
       ctx.translate(centerX, centerY);
-      ctx.scale(pulseScale, pulseScale);
+      ctx.scale(pulseSc, pulseSc);
       
-      // Outer white glow
+      // Outer white glow with blur
+      ctx.filter = `blur(${plusOuterGlowBlur}px)`;
       ctx.strokeStyle = `rgba(255, 255, 255, ${glowIntensity * 0.9})`;
-      ctx.lineWidth = 14;
+      ctx.lineWidth = plusOuterGlowWidth;
       ctx.lineCap = 'round';
       
       // Vertical line
@@ -287,9 +347,10 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
       ctx.lineTo(plusCoreSize, 0);
       ctx.stroke();
       
-      // Inner bright white core
+      // Inner bright white core (no blur)
+      ctx.filter = 'none';
       ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 8;
+      ctx.lineWidth = plusInnerCoreWidth;
       
       // Vertical line
       ctx.beginPath();
@@ -315,7 +376,14 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
         cancelAnimationFrame(animationFrameId);
       }
     };
-  }, [size, canvasSize, electronGlowRadius, centerGlowMultiplier, plusGlowLayers, plusGlowSize, plusCoreSize]);
+  }, [
+    size, canvasSize, electronGlowRadius, centerGlowMultiplier, plusGlowLayers, plusGlowSize, plusCoreSize,
+    orbitRadiusMultiplier, electronSpeeds, orbitRotations, electronColors, electronCoreRadius,
+    trailMaxLength, trailOpacity, orbitOpacity, orbitLineWidth, flareBlur, coreBlur,
+    flareWidthMultiplier, flareHeightMultiplier, verticalFlareHeightMultiplier, verticalFlareWidthMultiplier,
+    coreRadiusMultiplier, plusOuterGlowWidth, plusOuterGlowBlur, plusInnerCoreWidth, plusGlowBaseWidth, plusGlowWidthIncrement,
+    pulseSpeed, pulseScale, glowIntensityBase, glowIntensityVariation
+  ]);
 
   const dropShadowFilter = `drop-shadow(0 0 ${dropShadowSizes[0]}px rgba(96, 165, 250, ${dropShadowOpacities[0]})) drop-shadow(0 0 ${dropShadowSizes[1]}px rgba(96, 165, 250, ${dropShadowOpacities[1]})) drop-shadow(0 0 ${dropShadowSizes[2]}px rgba(96, 165, 250, ${dropShadowOpacities[2]}))`;
 
@@ -325,7 +393,7 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
         {`
           @keyframes bob {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
+            50% { transform: translateY(-${bobAnimationDistance}px); }
           }
         `}
       </style>
@@ -338,7 +406,7 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
         bottom={float ? floatPosition.bottom : undefined}
         zIndex={float ? 10 : 'auto'}
         sx={{
-          animation: 'bob 3s ease-in-out infinite',
+          animation: `bob ${bobAnimationDuration}s ease-in-out infinite`,
           transform: float && floatPosition.left === '50%' ? 'translateX(-50%)' : undefined,
           pointerEvents: float ? 'none' : 'auto'
         }}
