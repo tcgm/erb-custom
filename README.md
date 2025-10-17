@@ -113,8 +113,6 @@
 - **Electron Debug** - Development tools
 - **Electron Updater** - Auto-update functionality
 
-See [INTEGRATION_COMPLETE.md](designDocs/INTEGRATION_COMPLETE.md) for detailed integration documentation.
-
 <br>
 
 ## 🚀 Getting Started
@@ -188,10 +186,6 @@ erb-custom/
 ├── docs/                        # Documentation
 │   ├── PHASER_INTEGRATION.md   # Phaser setup guide
 │   └── LAN_SHARE_SECURITY.md   # LAN Share security
-│
-├── designDocs/                  # Design documentation
-│   ├── INTEGRATION_COMPLETE.md # Integration details
-│   └── PHASER_ADDED.md         # Phaser implementation
 │
 └── release/                     # Build output
     └── app/                     # Packaged application
@@ -354,12 +348,11 @@ npm run build:renderer # Build renderer process (production)
 
 - [Phaser Integration Guide](docs/PHASER_INTEGRATION.md)
 - [LAN Share Security](docs/LAN_SHARE_SECURITY.md)
-- [Integration Details](designDocs/INTEGRATION_COMPLETE.md)
 - [React Bits README](src/renderer/components/react-bits/README.md)
 
 ## 🤝 Contributing
 
-This is a customized fork of [Electron React Boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate) with additional features for TCGM projects.
+This is a customized fork of [Electron React Boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate) with additional features for advanced projects.
 
 ## � License
 
