@@ -33,3 +33,6 @@ npm-debug.log.*
 *.scss.d.ts
 
 .history/
+.vscode/
+designDocs/
+mainPotential/
