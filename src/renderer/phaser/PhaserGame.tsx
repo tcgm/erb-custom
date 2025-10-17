@@ -42,7 +42,7 @@ const PhaserGame: React.FC<PhaserGameProps> = ({
       scene: scenes,
       scale: {
         mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH,
+        autoCenter: Phaser.Scale.NO_CENTER,
       },
       render: {
         antialias: true,
@@ -56,7 +56,19 @@ const PhaserGame: React.FC<PhaserGameProps> = ({
     // Cleanup on unmount
     return () => {
       if (gameRef.current) {
-        gameRef.current.destroy(true);
+        // Stop all sounds and suspend audio context before destroying
+        const game = gameRef.current;
+        if (game.sound) {
+          game.sound.stopAll();
+          // Suspend the audio context if it's a WebAudioSoundManager
+          const soundManager = game.sound as any;
+          if (soundManager.context && typeof soundManager.context.suspend === 'function') {
+            soundManager.context.suspend().catch(() => {
+              // Ignore errors if context is already closed
+            });
+          }
+        }
+        game.destroy(true, false);
         gameRef.current = null;
       }
     };
@@ -67,8 +79,8 @@ const PhaserGame: React.FC<PhaserGameProps> = ({
       ref={containerRef}
       style={{
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
         width: '100%',
         height: '100%',
       }}
