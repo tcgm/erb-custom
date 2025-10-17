@@ -42,7 +42,7 @@ export default class DemoScene extends Phaser.Scene {
       yoyo: true,
       repeat: -1,
       onUpdate: (tween) => {
-        const value = tween.getValue();
+        const value = tween.getValue() ?? 0;
         bg.clear();
         const color1 = Phaser.Display.Color.Interpolate.ColorWithColor(
           Phaser.Display.Color.ValueToColor(0x0a0a1e),
