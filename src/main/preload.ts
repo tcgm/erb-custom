@@ -22,6 +22,17 @@ const electronHandler = {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
   },
+  // Module status APIs
+  modules: {
+    // Check if file operations module is available
+    checkFileOperations: () => ipcRenderer.invoke('system:getPaths').then(() => true).catch(() => false),
+    // Check if LAN share module is available
+    checkLanShare: () => ipcRenderer.invoke('lan:transfers').then(() => true).catch(() => false),
+    // Check if custom stream protocol is available
+    checkStreamProtocol: () => Promise.resolve(true), // Protocol is registered at startup
+    // Get LAN transfer stats
+    getLanStats: () => ipcRenderer.invoke('lan:transfers'),
+  },
 };
 
 contextBridge.exposeInMainWorld('electron', electronHandler);

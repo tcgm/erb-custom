@@ -5,6 +5,7 @@ import { Button as MUIButton } from "@mui/material"
 import icon from "../../assets/icon.svg"
 import HelloBits from "./components/react-bits/HelloBits"
 import Dock from "./components/react-bits/all/Components/Dock/Dock"
+import ModuleStatus from "./components/ModuleStatus"
 import { FaHome, FaGithub, FaCogs } from "react-icons/fa"
 
 const DocsButton: React.FC = () => (
@@ -70,7 +71,12 @@ const MainComponent: React.FC = () => {
         <StarButton />
       </Stack>
 
-      <Box mt={10} display="flex" justifyContent="center">
+      {/* Module Status Line */}
+      <Box mt={8} mb={6} display="flex" justifyContent="center">
+        <ModuleStatus />
+      </Box>
+
+      <Box mt={4} display="flex" justifyContent="center">
         <Box width="100%" maxW="800px">
           <Dock
             items={[
