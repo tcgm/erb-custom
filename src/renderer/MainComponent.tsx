@@ -1,5 +1,5 @@
 import React from "react"
-import { useNavigate } from "react-router-dom"
+import { MemoryRouter as Router, Routes, Route, useNavigate } from "react-router-dom"
 import { Box, Heading, Button as ChakraButton, Stack } from "@chakra-ui/react"
 // Using a plain anchor with Bootstrap classes to avoid heavy union types from react-bootstrap Button
 import { Button as MUIButton } from "@mui/material"
@@ -7,6 +7,7 @@ import HelloBits from "./components/react-bits/HelloBits"
 import Dock from "./components/react-bits/all/Components/Dock/Dock"
 import ModuleStatus from "./components/ModuleStatus"
 import AnimatedLogo from "./components/AnimatedLogo"
+import PhaserDemo from "./phaser/PhaserDemo"
 import { FaHome, FaGithub, FaCogs, FaGamepad } from "react-icons/fa"
 
 const DocsButton: React.FC = () => (
@@ -46,7 +47,13 @@ const StarButton: React.FC = () => (
   </MUIButton>
 )
 
-const MainComponent: React.FC = () => {
+// Wrapper to provide navigation to PhaserDemo
+function PhaserDemoPage() {
+  const navigate = useNavigate();
+  return <PhaserDemo onBack={() => navigate('/')} />;
+}
+
+const HomePage: React.FC = () => {
   const navigate = useNavigate()
 
   return (
@@ -103,6 +110,17 @@ const MainComponent: React.FC = () => {
         </Box>
       </Box>
     </Box>
+  )
+}
+
+const MainComponent: React.FC = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/phaser" element={<PhaserDemoPage />} />
+      </Routes>
+    </Router>
   )
 }
 
